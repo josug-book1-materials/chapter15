@@ -3,6 +3,4 @@ TESTNAME=${GAT_NAME}_u${GAT_USER}_r${GAT_RPT}_s${GAT_DUR}
 RF=/usr/share/nginx/html/gatling/
 mkdir -p ${RF}
 echo "${TESTNAME} start."
-bin/gatling.sh -s SampleAppGet -rf ${RF} -on ${TESTNAME}|tee ${RF}/${TESTNAME}_stdout.txt
-FOLDER=`ls -td ${RF}/${TESTNAME}-*|head -n 1`
-mv ${RF}/${TESTNAME}_stdout.txt ${FOLDER}
+bin/gatling.sh -s SampleAppGet -rf ${RF} -on ${TESTNAME}
