@@ -1,0 +1,41 @@
+#!/bin/bash
+#タイムゾーン設定
+cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+#(1)必要パッケージのインストール
+yum install python-pip firefox Xvfb -y
+pip install selenium pyvirtualdisplay
+
+#(2)サンプルプログラムの取得
+cd /root
+mkdir selenium
+cd selenium
+wget https://raw.githubusercontent.com/josug-book1-materials/chapter15/master/selenium/v2app_test.py
+wget https://raw.githubusercontent.com/josug-book1-materials/chapter15/master/selenium/exec_test.sh
+wget https://raw.githubusercontent.com/josug-book1-materials/chapter15/master/selenium/sample.png
+
+#(3) nginxのインストール
+cat << EOF > /etc/yum.repos.d/nginx.repo
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
+gpgcheck=0
+enabled=1
+EOF
+
+yum install nginx -y
+
+cat << EOF > /etc/nginx/conf.d/default.conf
+server {
+  listen       80 default_server;
+  server_name  _;
+
+  location / {
+    autoindex on;
+    root /usr/share/nginx/html;
+  }
+}
+EOF
+
+service nginx start
+

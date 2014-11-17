@@ -17,31 +17,32 @@ class SampleAppGet extends Simulation {
   val name = System.getProperty("name", "")
   val scname = s"${name}Get_u${userCount}_r${repeatCount}_s${duration}"
 
-  //httpプロトコル定義
+  //(a) httpプロトコル定義
   val httpConf = http
-    .baseURL(targetUrl) // requesturl
+    .baseURL(targetUrl)                  // リクエストURLと基本ヘッダの指定
     .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
     .acceptEncodingHeader("gzip,deflate,sdch")
     .acceptLanguageHeader("ja,en-US;q=0.8,en;q=0.6")
     .userAgentHeader("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36")
     
-  // header 定義
+  //(b) 付加 header 定義
   val headers_0 = Map("Cache-Control" -> "max-age=0")
 
-  //実行シナリオ
+  //(c) 実行シナリオ
   val scn = scenario(scname)
-    .exitBlockOnFail{                             //エラー発生時は繰り返しを終了
-      repeat(repeatCount , "n"){        //repeat_cnt指定回数繰り返す
-        exec(
-          http("request_get_${n}")
-            .get("") 
-            .headers(headers_0)
+    .exitBlockOnFail{                   // エラーハンドリング
+      repeat(repeatCount , "n"){        // ループ条件
+        exec(                           // テスト実行
+          http("request_get_${n}")      // HTTPリクエスト動作定義
+            .get("")                    // Getメソッド呼び出し(パス)
+            .headers(headers_0)         // HTTPオプション
           ) 
       }
   }
 
-  //実行条件
+  //(d) 実行条件
   setUp(scn.inject(
-    rampUsers(userCount) over (duration seconds)  //duration 秒間に userCount数の実行を開始
+    rampUsers(userCount) over (duration seconds)  //テスト実行条件
   )).protocols(httpConf)
+
 }
